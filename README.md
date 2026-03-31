@@ -1,3 +1,11 @@
+---
+title: Xpdite Scraper
+emoji: 🕷️
+colorFrom: blue
+colorTo: green
+sdk: docker
+app_port: 7860
+---
 # XpditeS: Tiered Web Scraper
 
 ![XpditeS Header](https://img.shields.io/badge/Status-Active-brightgreen) ![Python 3.11+](https://img.shields.io/badge/Python-3.11%2B-blue)
