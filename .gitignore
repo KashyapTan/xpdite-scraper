@@ -1,0 +1,22 @@
+# Virtual environments
+.venv/
+env/
+venv/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Scraper output junk files
+*.txt
+*.md
+*.csv
+*.html
+
+# Ignore other project folders in this sandbox
+/nba/
+/vis/
+/lib/
+/Scripts/
