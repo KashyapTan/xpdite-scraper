@@ -10,6 +10,8 @@ app_port: 7860
 
 ![XpditeS Header](https://img.shields.io/badge/Status-Active-brightgreen) ![Python 3.11+](https://img.shields.io/badge/Python-3.11%2B-blue)
 
+**[Try it live on Hugging Face Spaces](https://huggingface.co/spaces/Kashyaptan/xpdite-scraper)**
+
 **XpditeS** is a high-performance, tiered web scraping engine that powers the official Xpdite Web Fetch MCP tool. It is designed to navigate complex bot protections, JavaScript-heavy sites, and rate limits through an intelligent escalation waterfall (Basic HTTP → JS Rendering → Undetected Headless Browsers).
 
 This repository contains both a **Terminal User Interface (TUI)** and a **FastAPI Web UI** designed for testing, benchmarking, and extracting data from target websites.
