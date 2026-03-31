@@ -11,12 +11,13 @@ __pycache__/
 
 # Scraper output junk files
 *.txt
-*.md
 *.csv
-*.html
+scrape/*.html
+scrape/*.md
 
 # Ignore other project folders in this sandbox
 /nba/
 /vis/
 /lib/
 /Scripts/
+assets/

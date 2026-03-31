@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XpditeS Scraper</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Left Panel - Controls -->
+        <aside class="left-panel">
+            <div class="panel-header">
+                <div class="logo-title">
+                    <img src="/api/logo" alt="Xpdite Logo" class="header-logo">
+                    <h1>XpditeS Scraper</h1>
+                </div>
+                <p>Extract content from any webpage</p>
+            </div>
+
+            <div class="controls">
+                <!-- URL Input -->
+                <div class="control-group">
+                    <label for="urlInput">Target URL</label>
+                    <input 
+                        type="text" 
+                        id="urlInput" 
+                        placeholder="https://example.com/article" 
+                        class="text-input"
+                    >
+                </div>
+
+                <!-- Extraction Mode -->
+                <div class="control-group">
+                    <label for="modeSelect">Extraction Mode</label>
+                    <select id="modeSelect" class="select-input">
+                        <option value="precision">Precision (Main content only)</option>
+                        <option value="full">Full (Raw Markdown)</option>
+                    </select>
+                </div>
+
+                <!-- Scraping Tier -->
+                <div class="control-group">
+                    <label for="tierSelect">Scraping Tier</label>
+                    <select id="tierSelect" class="select-input">
+                        <option value="Auto">Auto (Recommended)</option>
+                        <option value="1">Tier 1 - Fast HTTP</option>
+                        <option value="2">Tier 2 - Camoufox</option>
+                        <option value="3">Tier 3 - Nodriver</option>
+                    </select>
+                </div>
+
+                <!-- Scrape Button -->
+                <button id="scrapeBtn" class="primary-btn">
+                    Start Scraping
+                </button>
+            </div>
+        </aside>
+
+        <!-- Right Panel - Results -->
+        <main class="right-panel">
+            <div class="results-header">
+                <h2>Scraped Content</h2>
+                <div id="resultStats" class="result-stats" style="display: none;">
+                    <span class="stat"><span class="stat-label">Tier:</span> <span id="tierUsed" class="stat-value"></span></span>
+                    <span class="stat"><span class="stat-label">Chars:</span> <span id="charCount" class="stat-value"></span></span>
+                    <span class="stat"><span class="stat-label">Time:</span> <span id="elapsedTime" class="stat-value"></span></span>
+                </div>
+            </div>
+
+            <div class="results-content">
+                <!-- Loading State -->
+                <div id="loadingIndicator" class="loading-container" style="display: none;">
+                    <div class="spinner"></div>
+                    <p>Scraping in progress...</p>
+                </div>
+
+                <!-- Error State -->
+                <div id="errorMessage" class="error-message" style="display: none;"></div>
+
+                <!-- Empty State -->
+                <div id="emptyState" class="empty-state">
+                    <p>Enter a URL and click "Start Scraping" to see results here.</p>
+                </div>
+
+                <!-- Results -->
+                <textarea 
+                    id="resultContent" 
+                    class="result-textarea" 
+                    readonly 
+                    style="display: none;"
+                ></textarea>
+
+                <!-- Actions -->
+                <div id="resultActions" class="result-actions" style="display: none;">
+                    <button id="copyBtn" class="action-btn">Copy to Clipboard</button>
+                    <button id="downloadBtn" class="action-btn">Download</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>
