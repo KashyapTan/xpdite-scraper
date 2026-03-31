@@ -25,9 +25,7 @@ USER user
 # Set home to the user's home directory
 ENV HOME=/home/user \
     PATH=/home/user/.local/bin:$PATH \
-    PYTHONUNBUFFERED=1 \
-    STREAMLIT_SERVER_PORT=7860 \
-    STREAMLIT_SERVER_ADDRESS=0.0.0.0
+    PYTHONUNBUFFERED=1
 
 # Set the working directory to the user's home directory
 WORKDIR $HOME/app
@@ -45,8 +43,8 @@ RUN playwright install-deps chromium
 USER user
 RUN playwright install chromium
 
-# Expose the port Streamlit will run on
+# Expose the port for FastAPI/Uvicorn
 EXPOSE 7860
 
-# Command to run the Streamlit application
-CMD ["streamlit", "run", "web_ui.py"]
+# Command to run the FastAPI application with Uvicorn
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "7860"]
