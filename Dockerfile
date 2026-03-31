@@ -40,8 +40,10 @@ RUN pip install --no-cache-dir --upgrade pip setuptools wheel
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Install Playwright browsers (if Playwright is used)
-RUN playwright install chromium
+USER root
 RUN playwright install-deps chromium
+USER user
+RUN playwright install chromium
 
 # Expose the port Streamlit will run on
 EXPOSE 7860
