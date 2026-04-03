@@ -47,4 +47,4 @@ RUN playwright install chromium
 EXPOSE 7860
 
 # Command to run the FastAPI application with Uvicorn
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "7860"]
+CMD ["python3", "-m", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "7860"]
