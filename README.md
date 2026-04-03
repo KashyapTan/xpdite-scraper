@@ -1,6 +1,6 @@
 ---
-title: Xpdite Scraper
-emoji: 🕷️
+title: XpditeS
+emoji: 🕸️
 colorFrom: blue
 colorTo: green
 sdk: docker
