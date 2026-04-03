@@ -1,3 +1,5 @@
+# FastAPI backend for XpditeS Scraper
+# Test comment for HF rebuild
 """
 FastAPI backend for XpditeS Scraper
 Replaces Streamlit with a lightweight REST API
