@@ -67,3 +67,4 @@ docker run -p 7860:7860 xpdites-scraper
 | 1 | curl_cffi | ~200ms | Static sites, articles |
 | 2 | Camoufox | ~2-5s | JS-rendered content |
 | 3 | Nodriver | ~3-8s | Heavy bot protection |
+test commit to trigger rebuild
