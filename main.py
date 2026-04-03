@@ -7,6 +7,7 @@ Replaces Streamlit with a lightweight REST API
 
 import asyncio
 import time
+import os
 from pathlib import Path
 from fastapi import FastAPI, HTTPException
 from fastapi.staticfiles import StaticFiles
@@ -50,7 +51,20 @@ async def serve_frontend():
 @app.get("/api/health")
 async def health_check():
     """Health check endpoint"""
-    return {"status": "ok", "service": "xpdites-scraper"}
+    # Check for core dependency availability without crashing
+    try:
+        import playwright
+
+        playwright_ok = True
+    except ImportError:
+        playwright_ok = False
+
+    return {
+        "status": "ok",
+        "service": "xpdites-scraper",
+        "playwright_installed": playwright_ok,
+        "port_configuration": os.environ.get("PORT", "7860"),
+    }
 
 
 @app.post("/api/scrape", response_model=ScrapeResponse)
@@ -107,5 +121,16 @@ async def get_logo():
 
 if __name__ == "__main__":
     import uvicorn
+    import os
 
-    uvicorn.run(app, host="0.0.0.0", port=7860)
+    # Force port to be an integer to avoid Node-style string/socket path pitfalls
+    # Hugging Face usually provides PORT as an environment variable
+    port_env = os.environ.get("PORT", "7860")
+    try:
+        port = int(port_env)
+    except ValueError:
+        print(f"Warning: Invalid PORT '{port_env}', falling back to 7860")
+        port = 7860
+
+    print(f"Starting server on 0.0.0.0:{port}")
+    uvicorn.run(app, host="0.0.0.0", port=port)
