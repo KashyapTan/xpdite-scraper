@@ -5,7 +5,6 @@ FastAPI backend for XpditeS Scraper
 Replaces Streamlit with a lightweight REST API
 """
 
-import asyncio
 import time
 import os
 from pathlib import Path
@@ -79,15 +78,20 @@ async def scrape_url(request: ScrapeRequest):
             status_code=400, detail="Invalid URL. Must start with http:// or https://"
         )
 
-    # Set extraction mode
-    scraper._EXTRACT_MODE = request.mode
+    # Validate mode
+    mode = request.mode.strip().lower()
+    if mode not in {"precision", "full"}:
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid mode. Must be 'precision' or 'full'.",
+        )
 
     # Determine tier
     force_tier = None if request.tier == "Auto" else int(request.tier)
 
     try:
         start_time = time.time()
-        result = await scraper.scrape(url, force_tier=force_tier)
+        result = await scraper.scrape(url, force_tier=force_tier, mode=mode)
         elapsed_time = time.time() - start_time
 
         if result:
@@ -113,9 +117,9 @@ async def scrape_url(request: ScrapeRequest):
 @app.get("/api/logo")
 async def get_logo():
     """Serve the logo image"""
-    logo_path = Path(__file__).parent / "assets" / "logo.jpg"
+    logo_path = Path(__file__).parent / "assets" / "logo.svg"
     if logo_path.exists():
-        return FileResponse(logo_path, media_type="image/jpeg")
+        return FileResponse(logo_path, media_type="image/svg+xml")
     raise HTTPException(status_code=404, detail="Logo not found")
 
 

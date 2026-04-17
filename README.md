@@ -55,7 +55,7 @@ docker run -p 7860:7860 xpdites-scraper
 ├── scrape/
 │   └── scraper.py       # Core scraping engine
 ├── assets/
-│   └── logo.jpg         # Logo image
+│   └── logo.svg         # Logo image
 ├── Dockerfile           # Docker configuration
 └── requirements.txt     # Python dependencies
 ```
