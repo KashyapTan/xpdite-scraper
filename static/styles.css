@@ -84,10 +84,9 @@ html, body {
 }
 
 .header-logo {
-    width: 28px;
-    height: 28px;
-    border-radius: 6px;
-    object-fit: cover;
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
     flex-shrink: 0;
 }
 
