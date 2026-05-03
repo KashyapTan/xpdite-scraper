@@ -1,0 +1,3 @@
+# Exclude pyproject.toml so Vercel falls back to requirements.txt
+# (pyproject.toml has heavy browser deps that exceed Lambda's 500MB limit)
+pyproject.toml
