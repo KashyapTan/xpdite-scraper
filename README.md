@@ -10,30 +10,30 @@
   <table>
     <tr>
       <td align="center">
-        <img alt="Status" src="https://img.shields.io/badge/Status-Active-16a34a?style=for-the-badge">
+        <a href="https://xpdites.vercel.app/"><img alt="Status" src="https://img.shields.io/badge/Status-Active-16a34a?style=for-the-badge"></a>
       </td>
       <td align="center">
-        <img alt="Python" src="https://img.shields.io/badge/Python-3.11%2B-2563eb?style=for-the-badge&logo=python&logoColor=white">
+        <a href="https://www.python.org/"><img alt="Python" src="https://img.shields.io/badge/Python-3.11%2B-2563eb?style=for-the-badge&logo=python&logoColor=white"></a>
       </td>
       <td align="center">
-        <img alt="FastAPI" src="https://img.shields.io/badge/FastAPI-0ea5e9?style=for-the-badge&logo=fastapi&logoColor=white">
+        <a href="https://fastapi.tiangolo.com/"><img alt="FastAPI" src="https://img.shields.io/badge/FastAPI-0ea5e9?style=for-the-badge&logo=fastapi&logoColor=white"></a>
       </td>
       <td align="center">
-        <img alt="Docker" src="https://img.shields.io/badge/Deploy-Docker-0ea5e9?style=for-the-badge&logo=docker&logoColor=white">
+        <a href="https://xpdites.vercel.app/"><img alt="Vercel" src="https://img.shields.io/badge/Deploy-Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white"></a>
       </td>
     </tr>
     <tr>
       <td align="center">
-        <img alt="Tiered Escalation" src="https://img.shields.io/badge/Tiered-Escalation-0f766e?style=for-the-badge">
+        <a href="#scraping-tiers"><img alt="Tiered Escalation" src="https://img.shields.io/badge/Tiered-Escalation-0f766e?style=for-the-badge"></a>
       </td>
       <td align="center">
-        <img alt="TUI" src="https://img.shields.io/badge/Interface-TUI-111827?style=for-the-badge">
+        <a href="#local-terminal-tui"><img alt="TUI" src="https://img.shields.io/badge/Interface-TUI-111827?style=for-the-badge"></a>
       </td>
       <td align="center">
-        <img alt="Web UI" src="https://img.shields.io/badge/Interface-Web%20UI-1d4ed8?style=for-the-badge">
+        <a href="https://xpdites.vercel.app/"><img alt="Web UI" src="https://img.shields.io/badge/Interface-Web%20UI-1d4ed8?style=for-the-badge"></a>
       </td>
       <td align="center">
-        <img alt="FastAPI API" src="https://img.shields.io/badge/API-FastAPI-0ea5e9?style=for-the-badge&logo=fastapi&logoColor=white">
+        <a href="https://xpdites.vercel.app/docs"><img alt="FastAPI API" src="https://img.shields.io/badge/API-FastAPI-0ea5e9?style=for-the-badge&logo=fastapi&logoColor=white"></a>
       </td>
     </tr>
   </table>
@@ -106,6 +106,15 @@ Open http://127.0.0.1:7860
 ```bash
 uv run streamlit run web_ui.py
 ```
+
+---
+
+## Vercel Deployment
+
+XpditeS is configured for 1-click deployment on Vercel's Hobby plan:
+**Live Demo:** [https://xpdites.vercel.app/](https://xpdites.vercel.app/)
+
+> **⚠️ Limitation:** Due to Vercel's serverless constraints (500MB storage limit and no persistent environment), **browser-based tiers (Tier 2 and Tier 3) are not available** in this cloud deployment. The Vercel instance relies entirely on Tier 1 (HTTP) and Tier 1.5 (Jina) scraping. For full tier support, run XpditeS locally or via Docker.
 
 ---
 

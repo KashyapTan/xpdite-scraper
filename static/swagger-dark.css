@@ -1,0 +1,444 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap');
+@import url('https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.9.0/swagger-ui.css');
+
+/* ══════════════════════════════════════════════════════════════
+   XpditeS - Swagger UI Theme Overrides
+   Matching the precise design system of settings.tsx and toolcall.css
+   ══════════════════════════════════════════════════════════════ */
+
+:root {
+    --color-bg: #0d0d0d;
+    --color-surface: #1a1a1a;
+    --color-surface-strong: #262626;
+    --color-text: #ffffff;
+    --color-text-dim: #d1d5db;
+    --color-text-muted: rgba(255, 255, 255, 0.4);
+    --color-border: #262626;
+    --color-border-strong: #404040;
+    
+    --color-button-primary-background: #ffffff;
+    --color-button-primary-text: #000000;
+    --color-button-primary-background-hover: #dddddd;
+    --color-button-primary-border: #ffffff;
+    
+    --color-red: #ef4444;
+    --color-red-soft: rgba(239, 68, 68, 0.15);
+    
+    --font-family-ui: 'Montserrat', -apple-system, sans-serif;
+    --font-family-mono: 'Fira Code', monospace;
+}
+
+body {
+    background-color: var(--color-bg) !important;
+    color: var(--color-text) !important;
+    font-family: var(--font-family-ui) !important;
+    margin: 0;
+    padding: 0;
+}
+
+.swagger-ui {
+    font-family: var(--font-family-ui) !important;
+    color: var(--color-text) !important;
+}
+
+.swagger-ui .wrapper {
+    max-width: 1000px !important;
+    margin: 0 auto !important;
+    padding: 20px !important;
+}
+
+/* ── Global Text & Headers (Force White) ── */
+.swagger-ui h1, .swagger-ui h2, .swagger-ui h3, .swagger-ui h4, .swagger-ui h5, .swagger-ui h6,
+.swagger-ui p, .swagger-ui li, .swagger-ui label, .swagger-ui th, .swagger-ui td,
+.swagger-ui .opblock-tag, 
+.swagger-ui .opblock-tag small,
+.swagger-ui .opblock-section-header h4,
+.swagger-ui .responses-inner h4, 
+.swagger-ui .responses-inner h5,
+.swagger-ui .response-col_status, 
+.swagger-ui .response-col_description,
+.swagger-ui .response-col_links,
+.swagger-ui .tab li {
+    color: var(--color-text) !important;
+    font-family: var(--font-family-ui) !important;
+    background: transparent !important;
+}
+
+/* Links */
+.swagger-ui a {
+    color: var(--color-text-dim) !important;
+    text-decoration: underline;
+}
+
+/* ── Nuke Default Schema syntax highlighting (ugly blues) ── */
+.swagger-ui .model .property.primitive,
+.swagger-ui .model .property-type,
+.swagger-ui .prop-type,
+.swagger-ui span.prop-type,
+.swagger-ui .prop-format,
+.swagger-ui .type,
+.swagger-ui span.type,
+.swagger-ui .model-title,
+.swagger-ui .model-title__text {
+    color: var(--color-text-dim) !important;
+    font-family: var(--font-family-mono) !important;
+    font-size: 0.85rem !important;
+    background: transparent !important;
+}
+
+.swagger-ui .model .property-name,
+.swagger-ui table.model tbody tr td:first-of-type,
+.swagger-ui .parameter__name {
+    color: var(--color-text) !important;
+    font-family: var(--font-family-mono) !important;
+    font-weight: 500 !important;
+    background: transparent !important;
+}
+
+.swagger-ui .star,
+.swagger-ui .required {
+    color: var(--color-red) !important;
+    font-weight: bold !important;
+    background: transparent !important;
+}
+
+/* Specific overrides for sub-text to be dim white */
+.swagger-ui .opblock .opblock-summary-description,
+.swagger-ui .markdown p, 
+.swagger-ui .markdown li,
+.swagger-ui table thead tr th {
+    color: var(--color-text-dim) !important;
+}
+
+/* ── Fix glitchy backgrounds on schema titles & models ── */
+.swagger-ui .model-box, 
+.swagger-ui .model-box-control,
+.swagger-ui .prop-name,
+.swagger-ui button,
+.swagger-ui .property-row,
+.swagger-ui .model-toggle,
+.swagger-ui .model-toggle:after {
+    background-color: transparent !important;
+    background: transparent !important;
+}
+
+/* Highlighted "Special" Text (Grey background, white text) */
+.swagger-ui .markdown code,
+.swagger-ui .parameter__type {
+    background-color: var(--color-surface-strong) !important;
+    color: var(--color-text) !important;
+    font-family: var(--font-family-mono) !important;
+    padding: 2px 6px !important;
+    border-radius: 4px !important;
+    font-size: 0.85rem !important;
+}
+
+/* ── Main Headers ── */
+.swagger-ui .info {
+    margin: 30px 0 40px 0 !important;
+}
+
+.swagger-ui .info .title {
+    color: var(--color-text) !important;
+    font-size: 1.5rem !important;
+    font-weight: 600 !important;
+    margin-bottom: 12px !important;
+}
+
+.swagger-ui .info p {
+    margin: 0 !important;
+    color: var(--color-text-dim) !important;
+    font-size: 0.8rem !important;
+}
+
+.swagger-ui .info .title small {
+    background: var(--color-surface-strong) !important;
+    color: var(--color-text) !important;
+    border-radius: 4px !important;
+    padding: 4px 8px !important;
+    font-size: 0.8rem !important;
+}
+
+/* Markdown sections */
+.swagger-ui .markdown h2 {
+    color: var(--color-text) !important;
+    font-size: 1.1rem !important;
+    font-weight: 600 !important;
+    margin: 30px 0 16px 0 !important;
+    border-bottom: 1px solid var(--color-surface) !important;
+    padding-bottom: 8px !important;
+}
+
+.swagger-ui .markdown h3 {
+    margin: 24px 0 12px 0 !important;
+    font-size: 1rem !important;
+}
+
+/* Tag Headers (e.g. "default") */
+.swagger-ui .opblock-tag {
+    border-bottom: 1px solid var(--color-surface) !important;
+    padding-bottom: 10px !important;
+    margin-bottom: 16px !important;
+    font-size: 1.1rem !important;
+    font-weight: 600 !important;
+}
+
+.swagger-ui .opblock-tag:hover {
+    background: transparent !important;
+}
+
+/* ── Endpoint Blocks (Styled like Skill Cards) ── */
+.swagger-ui .opblock {
+    background-color: var(--color-surface) !important;
+    border: 1px solid var(--color-surface) !important;
+    border-radius: 8px !important;
+    box-shadow: none !important;
+    margin-bottom: 16px !important;
+    transition: all 0.2s ease !important;
+}
+
+.swagger-ui .opblock .opblock-summary {
+    border: none !important;
+    padding: 12px 14px !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+}
+
+/* GET / POST Badges (Matched to .terminal-inline-badge) */
+.swagger-ui .opblock .opblock-summary-method {
+    background-color: var(--color-surface) !important;
+    color: white !important;
+    border: 1px solid var(--color-text-dim) !important;
+    border-radius: 4px !important;
+    padding: 2px 6px !important;
+    font-size: 0.7rem !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.5px !important;
+    text-transform: uppercase !important;
+    font-family: var(--font-family-mono) !important;
+    min-width: auto !important;
+    text-align: center !important;
+    text-shadow: none !important;
+}
+
+/* Path */
+.swagger-ui .opblock .opblock-summary-path {
+    font-family: var(--font-family-mono) !important;
+    font-size: 0.85rem !important;
+    color: var(--color-text) !important;
+    white-space: nowrap !important;
+    font-weight: normal !important;
+}
+
+.swagger-ui .opblock .opblock-summary-path a {
+    color: var(--color-text) !important;
+    text-decoration: none !important;
+}
+
+/* Expanded Block */
+.swagger-ui .opblock-body {
+    background-color: var(--color-surface) !important;
+    border-top: 1px solid var(--color-surface-strong) !important;
+    padding: 24px !important;
+    border-bottom-left-radius: 8px !important;
+    border-bottom-right-radius: 8px !important;
+}
+
+/* Fix massive padding in endpoint description */
+.swagger-ui .opblock-description-wrapper {
+    margin: 0 0 20px 0 !important;
+    padding: 0 !important;
+}
+
+/* Layout for "Parameters" and "Try it out" */
+.swagger-ui .opblock-section-header {
+    background: transparent !important;
+    border-bottom: 1px solid var(--color-surface-strong) !important;
+    padding: 8px 0 !important;
+    margin-bottom: 12px !important;
+    box-shadow: none !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+}
+
+/* Remove huge padding on tables */
+.swagger-ui table.parameters {
+    margin-bottom: 0 !important;
+    width: 100% !important;
+}
+
+.swagger-ui table.parameters tbody tr td {
+    padding: 12px 0 !important;
+    vertical-align: top !important;
+}
+
+/* Layout for "Request body" header (flex fixing) */
+.swagger-ui .opblock-body .opblock-section-header.flex {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding: 10px 0 !important;
+}
+
+.swagger-ui .execute-wrapper {
+    padding: 16px 0 !important;
+}
+
+/* ── "Try it out" Button (Matched to .create-skill-btn) ── */
+.swagger-ui .try-out {
+    display: flex !important;
+    justify-content: flex-end !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.swagger-ui .try-out__btn {
+    background-color: var(--color-surface-strong) !important;
+    color: var(--color-text) !important;
+    border: 1px solid var(--color-border-strong) !important;
+    padding: 6px 14px !important;
+    border-radius: 6px !important;
+    font-family: var(--font-family-ui) !important;
+    font-size: 0.85rem !important;
+    font-weight: 500 !important;
+    box-shadow: none !important;
+    cursor: pointer !important;
+    transition: background-color 0.2s !important;
+}
+
+.swagger-ui .try-out__btn:hover {
+    background-color: var(--color-surface) !important;
+}
+
+/* ── Buttons (Matched to .action-btn and .save-btn) ── */
+.swagger-ui .btn {
+    background: none !important;
+    border: 1px solid var(--color-surface-strong) !important;
+    color: var(--color-text) !important;
+    padding: 3px 10px !important;
+    border-radius: 4px !important;
+    font-family: var(--font-family-ui) !important;
+    font-size: 0.75rem !important;
+    cursor: pointer !important;
+    transition: all 0.2s !important;
+    box-shadow: none !important;
+}
+
+.swagger-ui .btn:hover {
+    background-color: var(--color-surface-strong) !important;
+}
+
+.swagger-ui .btn.execute {
+    background-color: var(--color-button-primary-background) !important;
+    color: var(--color-button-primary-text) !important;
+    border: 1px solid var(--color-button-primary-border) !important;
+    padding: 8px 20px !important;
+    border-radius: 6px !important;
+    font-weight: 500 !important;
+    font-size: 0.9rem !important;
+}
+
+.swagger-ui .btn.execute:hover {
+    background-color: var(--color-button-primary-background-hover) !important;
+}
+
+.swagger-ui .btn.btn-clear {
+    border-color: var(--color-red) !important;
+    color: var(--color-red) !important;
+}
+
+.swagger-ui .btn.btn-clear:hover {
+    background-color: var(--color-red-soft) !important;
+}
+
+/* ── Inputs (Matched to .editor-group input/textarea) ── */
+.swagger-ui input[type=text], .swagger-ui textarea, .swagger-ui select {
+    background-color: var(--color-surface) !important;
+    border: 1px solid var(--color-border-strong) !important;
+    color: white !important;
+    padding: 8px !important;
+    border-radius: 6px !important;
+    font-family: inherit !important;
+    font-size: 0.9rem !important;
+    width: 100% !important;
+}
+
+.swagger-ui input:focus, .swagger-ui textarea:focus, .swagger-ui select:focus {
+    outline: none !important;
+    border-color: var(--color-text-dim) !important;
+    background-color: var(--color-surface-strong) !important;
+}
+
+/* ── JSON Code Blocks & Syntax ── */
+.swagger-ui .highlight-code {
+    background-color: var(--color-surface-strong) !important;
+    border: 1px solid var(--color-border-strong) !important;
+    border-radius: 8px !important;
+}
+
+.swagger-ui .opblock-body pre.microlight {
+    background-color: transparent !important;
+    color: var(--color-text) !important;
+    font-family: var(--font-family-mono) !important;
+    font-size: 12px !important;
+}
+
+/* Override microlight inline colors for a uniform dark mode look */
+.swagger-ui .microlight span {
+    color: var(--color-text) !important;
+    font-family: var(--font-family-mono) !important;
+}
+
+/* ── Schemas / Models Section ── */
+.swagger-ui section.models {
+    background-color: transparent !important;
+    border: 1px solid transparent !important;
+    margin-top: 40px !important;
+}
+
+.swagger-ui section.models h4 {
+    border-bottom: 1px solid var(--color-surface-strong) !important;
+    padding-bottom: 12px !important;
+    margin-bottom: 20px !important;
+    font-size: 1.1rem !important;
+}
+
+.swagger-ui .model-container {
+    background-color: var(--color-surface) !important;
+    border: 1px solid var(--color-surface) !important;
+    border-radius: 8px !important;
+    margin-bottom: 12px !important;
+    padding: 16px !important;
+    transition: all 0.2s ease !important;
+}
+
+.swagger-ui .model-container:hover {
+    border-color: var(--color-border-strong) !important;
+}
+
+/* SVG icons */
+.swagger-ui svg {
+    fill: var(--color-text) !important;
+    transition: fill 0.2s !important;
+}
+
+/* Hide Unnecessary Elements */
+.swagger-ui .info .base-url,
+.swagger-ui .scheme-container {
+    display: none !important;
+}
+
+/* Expand/collapse text inside models */
+.swagger-ui .model-toggle,
+.swagger-ui .model-toggle:after {
+    color: var(--color-text-dim) !important;
+    background: transparent !important;
+}
+
+/* Any table border overrides */
+.swagger-ui table tbody tr td {
+    border-top: 1px solid var(--color-surface-strong) !important;
+    padding: 10px 0 !important;
+}
