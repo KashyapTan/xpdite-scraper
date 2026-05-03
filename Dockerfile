@@ -37,11 +37,17 @@ COPY --chown=user . $HOME/app
 RUN pip install --no-cache-dir --upgrade pip setuptools wheel
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Install Playwright browsers (if Playwright is used)
+# Install browser-based tiers for Docker (commented out in requirements.txt for Vercel)
+RUN pip install --no-cache-dir browserforge>=1.2.4 camoufox[geoip]>=0.4.11 nodriver>=0.48.1 playwright>=1.58.0
+
+# Install Playwright OS dependencies as root
 USER root
-RUN playwright install-deps chromium
+RUN /home/user/.local/bin/playwright install-deps chromium
+
+# Install Playwright browsers and Camoufox binaries as user
 USER user
 RUN playwright install chromium
+RUN camoufox fetch
 
 # Expose the port for FastAPI/Uvicorn
 EXPOSE 7860
