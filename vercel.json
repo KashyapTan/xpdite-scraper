@@ -5,10 +5,10 @@
   "buildCommand": "",
   "outputDirectory": "",
   "rewrites": [
-    { "source": "/(.*)", "destination": "/main.py" }
+    { "source": "/(.*)", "destination": "/api/index.py" }
   ],
   "functions": {
-    "main.py": {
+    "api/index.py": {
       "maxDuration": 60,
       "memory": 1024
     }
