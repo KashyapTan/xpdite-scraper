@@ -1,20 +1,33 @@
+# Core scraping (HTTP-based, serverless-compatible)
 beautifulsoup4>=4.14.3
-browserforge>=1.2.4
-camoufox[geoip]>=0.4.11
 curl-cffi>=0.14.0
 markdownify>=1.2.2
-nodriver>=0.48.1
-pillow>=10.4.0
-playwright>=1.58.0
-pydantic>=2.10.0
-pydantic-settings>=2.7.0
-questionary>=2.1.1
-rich>=14.3.2
-surya-ocr>=0.17.1
 trafilatura>=2.0.0
-twikit>=2.3.3
 httpx>=0.27.0
+
 # FastAPI + Uvicorn for web UI
 fastapi>=0.115.0
 uvicorn[standard]>=0.27.0
 python-multipart>=0.0.6
+pydantic>=2.10.0
+pydantic-settings>=2.7.0
+
+# Twitter scraping (lightweight, no browser needed)
+twikit>=2.3.3
+
+# Image processing
+pillow>=10.4.0
+
+# --- Browser-based tiers (local/Docker only, NOT available on Vercel) ---
+# Uncomment these for local development with full tier support:
+# browserforge>=1.2.4
+# camoufox[geoip]>=0.4.11
+# nodriver>=0.48.1
+# playwright>=1.58.0
+
+# --- TUI dependencies (local CLI only) ---
+# questionary>=2.1.1
+# rich>=14.3.2
+
+# --- OCR (heavy, local only) ---
+# surya-ocr>=0.17.1

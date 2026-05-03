@@ -11,6 +11,7 @@ __pycache__/
 
 # Scraper output junk files
 *.txt
+!requirements.txt
 *.csv
 scrape/*.html
 scrape/*.md
@@ -20,3 +21,9 @@ scrape/*.md
 /vis/
 /lib/
 /Scripts/
+# reference/
+
+# Vercel
+.vercel/
+node_modules/
+

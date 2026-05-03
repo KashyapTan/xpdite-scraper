@@ -4,7 +4,7 @@ scraper.py - tiered web scraper with interactive TUI.
 
 This module keeps backward-compatible interfaces used by:
 - FastAPI backend (`main.py`)
-- Streamlit UIs (`web_ui.py`, `web_ui_temp.py`)
+- Streamlit UI (`web_ui.py`)
 - Terminal command (`XpditeS`, mapped to `scrape.scraper:main`)
 
 Core scraping behavior is updated to the concurrent tiered strategy.
@@ -66,12 +66,60 @@ _MAX_REDIRECT_HOPS = 8
 # Thresholds tuned from benchmark in updated scraper
 _SUCCESS_CHAR_THRESHOLD = 5000
 _SPARSE_CHAR_THRESHOLD = 500
-_TIER1_TIMEOUT = 7.0
-_TIER2_TIMEOUT = 10.0
-_TIER3_TIMEOUT = 12.0
-_GLOBAL_TIMEOUT = 12.0
-_STAGGER_DELAY = 1.5
-_URL_VALIDATION_TIMEOUT = 3.0
+
+
+def _is_vercel() -> bool:
+    """Detect if running inside Vercel's serverless environment."""
+    return bool(os.environ.get("VERCEL") or os.environ.get("VERCEL_ENV"))
+
+
+def _env_float(name: str, default: float) -> float:
+    raw_value = os.environ.get(name, "").strip()
+    if not raw_value:
+        return default
+    try:
+        return float(raw_value)
+    except ValueError:
+        return default
+
+
+def _clamp_timeout(value: float, ceiling: float) -> float:
+    if value <= 0:
+        return min(ceiling, 0.1) if ceiling > 0 else 0.1
+    if ceiling > 0 and value > ceiling:
+        return ceiling
+    return value
+
+
+# On Vercel Hobby (maxDuration=60s with Fluid Compute), we have generous room.
+# Leave a 5s safety margin for cold starts and response serialization.
+# Locally, keep the original conservative defaults.
+_VERCEL_GLOBAL_DEFAULT = 55.0
+_LOCAL_GLOBAL_DEFAULT = 9.0
+
+_GLOBAL_TIMEOUT = _env_float(
+    "SCRAPER_GLOBAL_TIMEOUT",
+    _VERCEL_GLOBAL_DEFAULT if _is_vercel() else _LOCAL_GLOBAL_DEFAULT,
+)
+_TIER1_TIMEOUT = _clamp_timeout(
+    _env_float(
+        "SCRAPER_TIER1_TIMEOUT",
+        25.0 if _is_vercel() else 5.0,
+    ),
+    _GLOBAL_TIMEOUT,
+)
+_TIER2_TIMEOUT = _clamp_timeout(
+    _env_float("SCRAPER_TIER2_TIMEOUT", 7.0), _GLOBAL_TIMEOUT
+)
+_TIER3_TIMEOUT = _clamp_timeout(
+    _env_float("SCRAPER_TIER3_TIMEOUT", 7.0), _GLOBAL_TIMEOUT
+)
+_STAGGER_DELAY = _clamp_timeout(
+    _env_float("SCRAPER_STAGGER_DELAY", 1.0), _GLOBAL_TIMEOUT
+)
+_URL_VALIDATION_TIMEOUT = _clamp_timeout(
+    _env_float("SCRAPER_URL_VALIDATION_TIMEOUT", 2.0), _GLOBAL_TIMEOUT
+)
 
 # Extraction mode kept for backward compatibility with existing callers.
 _EXTRACT_MODE: str = "precision"
@@ -771,6 +819,108 @@ async def tier1_5_jina(url: str) -> str | None:
         return None
 
 
+def _get_remote_browser_wss() -> str | None:
+    """
+    Get the remote browser WebSocket URL from environment variables.
+
+    Supports multiple providers:
+      - REMOTE_BROWSER_WSS: Full WebSocket URL (works with any CDP-compatible provider)
+          e.g. "wss://chrome.browserless.io?token=YOUR_TOKEN"
+          e.g. "wss://connect.browserbase.com?apiKey=YOUR_KEY"
+      - BROWSERLESS_TOKEN: Convenience shortcut for Browserless.io
+          Expands to "wss://chrome.browserless.io?token=<TOKEN>"
+    """
+    # Direct WSS URL takes priority (works with any provider)
+    wss = os.environ.get("REMOTE_BROWSER_WSS", "").strip()
+    if wss:
+        return wss
+
+    # Convenience shortcut for Browserless.io
+    token = os.environ.get("BROWSERLESS_TOKEN", "").strip()
+    if token:
+        return f"wss://chrome.browserless.io?token={token}"
+
+    return None
+
+
+async def tier2_remote_browser(url: str, mode: str) -> str | None:
+    """
+    Scrape using a remote headless browser via Playwright CDP WebSocket.
+
+    This tier connects to a cloud-hosted browser service (Browserless, BrowserCat,
+    Steel.dev, Browserbase, etc.) instead of launching a local browser binary.
+    This is the ONLY way to get browser-tier scraping on Vercel and other
+    serverless platforms.
+
+    Configure via environment variables:
+      - REMOTE_BROWSER_WSS: Full WebSocket URL for any CDP-compatible provider
+      - BROWSERLESS_TOKEN: Convenience shortcut for Browserless.io
+    """
+    wss_url = _get_remote_browser_wss()
+    if not wss_url:
+        return None
+
+    try:
+        from playwright.async_api import async_playwright
+    except ImportError:
+        return None
+
+    browser = None
+    playwright_instance = None
+    try:
+        safe_url = await _resolve_safe_redirect_chain(url, fail_open=True)
+        if not safe_url:
+            return None
+
+        playwright_instance = await async_playwright().start()
+        browser = await playwright_instance.chromium.connect_over_cdp(wss_url)
+
+        context = await browser.new_context(
+            user_agent=(
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                "AppleWebKit/537.36 (KHTML, like Gecko) "
+                "Chrome/124.0.0.0 Safari/537.36"
+            ),
+            viewport={"width": 1920, "height": 1080},
+            java_script_enabled=True,
+        )
+        page = await context.new_page()
+
+        timeout_ms = int(_TIER2_TIMEOUT * 1000)
+        await page.goto(safe_url, wait_until="load", timeout=timeout_ms)
+
+        # Brief wait for JS-rendered content to settle
+        await page.wait_for_timeout(1000)
+
+        html = await page.content()
+        final_url = page.url
+
+        await page.close()
+        await context.close()
+
+        if isinstance(final_url, str) and await _validate_read_website_url_async(
+            final_url
+        ):
+            return None
+        if has_js_wall(html):
+            return None
+        result = extract(html, mode, final_url if isinstance(final_url, str) else url)
+        return result if len(result) > 100 else None
+    except Exception:
+        return None
+    finally:
+        if browser:
+            try:
+                await browser.close()
+            except Exception:
+                pass
+        if playwright_instance:
+            try:
+                await playwright_instance.stop()
+            except Exception:
+                pass
+
+
 async def tier2_camoufox(url: str, mode: str) -> str | None:
     browser = None
     try:
@@ -1107,7 +1257,7 @@ async def scrape_concurrent(
                             TierAttempt(
                                 tier="twitter_twikit",
                                 success=False,
-                                error=f"Timeout after {_TIER1_TIMEOUT:.1f}s",
+                                error=f"Timeout after {_TIER1_TIMEOUT}s",
                                 elapsed_seconds=_TIER1_TIMEOUT,
                             )
                         )
@@ -1169,22 +1319,31 @@ async def scrape_concurrent(
             if force_tier == 1 or (force_tier is None and not needs_js(url)):
                 tiers_to_run.append(("tier1_curl", tier1_curl, _TIER1_TIMEOUT))
 
+            # On Vercel (or when a remote browser service is configured),
+            # use the remote browser tier instead of local Camoufox/Nodriver.
+            has_remote_browser = _get_remote_browser_wss() is not None
+
             if force_tier in (None, 2):
-                tiers_to_run.append(("tier2_camoufox", tier2_camoufox, _TIER2_TIMEOUT))
+                if _is_vercel() or has_remote_browser:
+                    tiers_to_run.append(
+                        ("tier2_remote_browser", tier2_remote_browser, _TIER2_TIMEOUT)
+                    )
+                else:
+                    tiers_to_run.append(
+                        ("tier2_camoufox", tier2_camoufox, _TIER2_TIMEOUT)
+                    )
 
             if force_tier in (None, 3) and allow_unsafe_tier3:
-                tiers_to_run.append(("tier3_nodriver", tier3_nodriver, _TIER3_TIMEOUT))
+                if not (_is_vercel() or has_remote_browser):
+                    tiers_to_run.append(
+                        ("tier3_nodriver", tier3_nodriver, _TIER3_TIMEOUT)
+                    )
 
             if not tiers_to_run:
                 result.warnings.append("No tiers available to run")
-                if force_tier == 3 and not allow_unsafe_tier3:
-                    result.suggestions.append(
-                        f"Set {_UNSAFE_TIER3_ENV}=1 to enable Tier 3 browser"
-                    )
-                else:
-                    result.suggestions.append(
-                        "Enable tier 3 with WEBSEARCH_ENABLE_UNSAFE_TIER3_BROWSER=1"
-                    )
+                result.suggestions.append(
+                    "Enable tier 3 with WEBSEARCH_ENABLE_UNSAFE_TIER3_BROWSER=1"
+                )
                 result.total_elapsed_seconds = time.perf_counter() - start_time
                 return result
 
@@ -1288,7 +1447,7 @@ async def scrape_concurrent(
             task.cancel()
         if stagger_task and not stagger_task.done():
             stagger_task.cancel()
-        result.warnings.append(f"Global timeout ({_GLOBAL_TIMEOUT:.1f}s) reached")
+        result.warnings.append(f"Global timeout ({_GLOBAL_TIMEOUT}s) reached")
 
     result.total_elapsed_seconds = time.perf_counter() - start_time
 
@@ -1301,22 +1460,20 @@ async def scrape_concurrent(
         if best_attempt.content_length < _SPARSE_CHAR_THRESHOLD:
             result.sparse_content = True
             result.warnings.append(
-                "Sparse content extracted "
-                f"({best_attempt.content_length} chars < {_SPARSE_CHAR_THRESHOLD})"
+                f"Sparse content extracted ({best_attempt.content_length} chars < {_SPARSE_CHAR_THRESHOLD} threshold)"
             )
 
-        restricted, signals = _detect_access_restriction(best_attempt.content)
-        if restricted:
+        is_restricted, signals = _detect_access_restriction(best_attempt.content)
+        if is_restricted:
             result.access_restriction_detected = True
             result.warnings.append(f"Access restriction detected: {', '.join(signals)}")
-            result.suggestions.append(f"Try external relays ({_EXTERNAL_RELAY_ENV}=1)")
+            result.suggestions.append(
+                "Try external relays (WEBSEARCH_ENABLE_EXTERNAL_RELAYS=1)"
+            )
             result.suggestions.append("Try archive fallback for paywalled content")
     else:
         failed_tiers = [a.tier for a in result.tier_attempts]
-        if failed_tiers:
-            result.warnings.append(f"All tiers failed: {', '.join(failed_tiers)}")
-        else:
-            result.warnings.append("All tiers failed")
+        result.warnings.append(f"All tiers failed: {', '.join(failed_tiers)}")
 
         if not allow_external_relays:
             result.suggestions.append(

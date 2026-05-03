@@ -3,6 +3,14 @@
 """
 FastAPI backend for XpditeS Scraper
 Replaces Streamlit with a lightweight REST API
+
+Vercel Deployment:
+  - Vercel auto-detects this file (main.py) and the `app` ASGI object.
+  - Static files are served from the /public directory by Vercel's CDN,
+    but we also mount /static for local dev compatibility.
+  - maxDuration is set to 60s in vercel.json (Hobby plan max with Fluid Compute).
+  - Browser-based tiers (Camoufox, Nodriver) are disabled in serverless;
+    only Tier 1 (HTTP) works on Vercel.
 """
 
 import time
@@ -17,7 +25,7 @@ import scrape.scraper as scraper
 
 app = FastAPI(title="XpditeS Scraper API", version="1.0.0")
 
-# Mount static files
+# Mount static files (for local dev; Vercel serves /public via CDN)
 static_path = Path(__file__).parent / "static"
 static_path.mkdir(exist_ok=True)
 app.mount("/static", StaticFiles(directory=str(static_path)), name="static")
@@ -36,6 +44,7 @@ class ScrapeResponse(BaseModel):
     char_count: int = 0
     elapsed_time: float = 0.0
     error: str | None = None
+    vercel_limited: bool = False
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -50,6 +59,9 @@ async def serve_frontend():
 @app.get("/api/health")
 async def health_check():
     """Health check endpoint"""
+    # Detect if running on Vercel
+    is_vercel = bool(os.environ.get("VERCEL") or os.environ.get("VERCEL_ENV"))
+
     # Check for core dependency availability without crashing
     try:
         import playwright
@@ -63,13 +75,19 @@ async def health_check():
         "service": "xpdites-scraper",
         "playwright_installed": playwright_ok,
         "port_configuration": os.environ.get("PORT", "7860"),
+        "environment": "vercel" if is_vercel else "local",
     }
 
 
 @app.post("/api/scrape", response_model=ScrapeResponse)
 async def scrape_url(request: ScrapeRequest):
     """
-    Scrape a URL and return the extracted content
+    Scrape a URL and return the extracted content.
+
+    On Vercel Hobby plan (Fluid Compute):
+      - maxDuration is 60s (configured in vercel.json)
+      - Only Tier 1 (HTTP-based scraping) is available
+      - Browser tiers are auto-disabled in serverless
     """
     # Validate URL
     url = request.url.strip()
@@ -104,10 +122,12 @@ async def scrape_url(request: ScrapeRequest):
                 elapsed_time=round(elapsed_time, 2),
             )
         else:
+            is_vercel = bool(os.environ.get("VERCEL") or os.environ.get("VERCEL_ENV"))
             return ScrapeResponse(
                 success=False,
                 error="All scraping tiers exhausted. Could not extract content.",
                 elapsed_time=round(elapsed_time, 2),
+                vercel_limited=is_vercel,
             )
 
     except Exception as e:
@@ -128,7 +148,7 @@ if __name__ == "__main__":
     import os
 
     # Force port to be an integer to avoid Node-style string/socket path pitfalls
-    # Hugging Face usually provides PORT as an environment variable
+    # Hosting platforms often provide PORT as an environment variable
     port_env = os.environ.get("PORT", "7860")
     try:
         port = int(port_env)

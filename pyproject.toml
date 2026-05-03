@@ -6,12 +6,14 @@ build-backend = "hatchling.build"
 name = "xpdites"
 version = "0.1.0"
 description = "Webscraper TUI"
+requires-python = ">=3.12"
 dependencies = [
     "beautifulsoup4>=4.14.3",
     "browserforge>=1.2.4",
     "camoufox[geoip]>=0.4.11",
     "crawl4ai>=0.8.0",
     "curl-cffi>=0.14.0",
+    "fastapi>=0.136.1",
     "markdownify>=1.2.2",
     "nodriver>=0.48.1",
     "pillow>=10.4.0",
