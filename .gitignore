@@ -26,4 +26,4 @@ scrape/*.md
 # Vercel
 .vercel/
 node_modules/
-
+uv.lock
