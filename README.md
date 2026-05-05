@@ -2,7 +2,7 @@
   <img alt="XpditeS" src="./assets/logo.svg" width="180">
 </div>
 
-<h2 align="center">XpditeS - Tiered Web Scraper</h2>
+<h2 align="center">XpditeS</h2>
 
 <p align="center">High-performance, defensive scraping engine powering the official Xpdite Web Fetch MCP tool.</p>
 
