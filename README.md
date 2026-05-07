@@ -114,7 +114,7 @@ uv run streamlit run web_ui.py
 XpditeS is configured for 1-click deployment on Vercel's Hobby plan:
 **Live Demo:** [https://xpdites.vercel.app/](https://xpdites.vercel.app/)
 
-> **⚠️ Limitation:** Due to Vercel's serverless constraints (500MB storage limit and no persistent environment), **browser-based tiers (Tier 2 and Tier 3) are not available** in this cloud deployment. The Vercel instance relies entirely on Tier 1 (HTTP) and Tier 1.5 (Jina) scraping. For full tier support, run XpditeS locally or via Docker.
+> **Limitation:** Due to Vercel's serverless constraints (500MB storage limit and no persistent environment), **browser-based tiers (Tier 2 and Tier 3) are not available** in this cloud deployment. The Vercel instance relies entirely on Tier 1 (HTTP) and Tier 1.5 (Jina) scraping. For full tier support, run XpditeS locally or via Docker.
 
 ---
 
